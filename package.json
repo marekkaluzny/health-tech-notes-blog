@@ -4,22 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently -k -n eleventy,tailwind \"eleventy --serve\" \"tailwindcss -i ./tailwind.css -o ./_site/assets/styles/tailwind.css --watch\"",
-    "debug": "DEBUG=Eleventy* concurrently -k -n eleventy,tailwind \"eleventy --serve\" \"tailwindcss -i ./tailwind.css -o ./_site/assets/styles/tailwind.css --watch\"",
+    "start": "concurrently -k -n eleventy,tailwind \"eleventy --input=src --serve\" \"tailwindcss -i ./tailwind.css -o ./_site/assets/styles/tailwind.css --watch\"",
+    "debug": "DEBUG=Eleventy* concurrently -k -n eleventy,tailwind \"eleventy --input=src --serve\" \"tailwindcss -i ./tailwind.css -o ./_site/assets/styles/tailwind.css --watch\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "build": "eleventy && tailwindcss -i ./tailwind.css -o ./_site/assets/styles/tailwind.css --minify"
+    "build": "eleventy --input=src && tailwindcss -i ./tailwind.css -o ./_site/assets/styles/tailwind.css --minify"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@tailwindcss/cli": "^4.2.2",
-    "@11ty/eleventy": "^3.1.5",
+    "@11ty/eleventy": "^3.1.2",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.2",
+    "@tailwindcss/cli": "^4.2.2",
     "concurrently": "^9.2.1",
-    "eslint": "^8.57.1"
+    "eslint": "^10.1.0"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: default.liquid
 pagination:
   data: collections.tagList
   size: 1
