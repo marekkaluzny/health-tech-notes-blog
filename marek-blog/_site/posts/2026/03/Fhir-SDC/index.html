@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+  	<meta name='viewport' content='width=device-width'>
+
+    <title>Health/Tech Notes</title>
+    <meta name='description' content=Welcome to Health/Tech Notes>
+    <meta name="theme-color" content="#ffffff"/>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png?v=denimdots1">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png?v=denimdots1">
+    <link rel="manifest" href="/manifest.json?v=denimdots1" />
+
+    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
+    <link href="/assets/styles/tailwind.css" rel="stylesheet" />
+    <link href="/assets/styles/index.css" rel="stylesheet" />
+    <script>
+      const isDarkMode = () => localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (isDarkMode()) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    </script>
+  </head>
+
+  <body class="dark:text-white dark:bg-black">
+    
+<div class="min-h-screen flex flex-col">
+
+<main class="flex-1 w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
+
+  
+<nav>
+  <ul class="flex py-2 border-b-2 mb-6">
+    <li class="mr-6"><a href="/">Home</a></li>
+    <li class="mr-6"><a href="/tags">Tags</a></li>
+    <li class="mr-6"><a href="/about">About</a></li>
+    <li class="mr-6"><span class="cursor-pointer" id="toggleDarkMode">Dark mode</spam></li>
+  </ul>
+</nav>
+
+<p class="text-5xl md:text-6xl font-black pt-10 md:pt-30 pb-4 leading-tight">
+    FHIR structured data capture (SDC) in practice
+</p>
+
+<div>
+    <em>2026-03-23</em> &middot; 
+    <span>8 min read</span>
+</div>
+
+<div class="mt-3 pb-10">
+  
+    
+  
+    
+      <a href="/tags/FHIR">
+        <span class="post-tag">FHIR</span>
+      </a>
+    
+  
+    
+      <a href="/tags/SDC">
+        <span class="post-tag">SDC</span>
+      </a>
+    
+  
+    
+      <a href="/tags/Healthcare Interoperability">
+        <span class="post-tag">Healthcare Interoperability</span>
+      </a>
+    
+  
+    
+      <a href="/tags/Data Standards">
+        <span class="post-tag">Data Standards</span>
+      </a>
+    
+  
+  </div>
+
+<div class="prose dark:prose-invert hover:prose-a:text-blue-500">
+  <p>One thing I keep seeing in healthcare projects, both in the UK and in Poland, is how often similar information is collected in slightly different ways. Each team has its own form, its own labels and its own logic. That usually leads to repeated data entry, avoidable mistakes, harder reporting and slower integration.</p>
+<p>This is where FHIR Structured Data Capture, or FHIR SDC, comes in.</p>
+<h2 id="what-is-fhir-sdc%3F" tabindex="-1">What is FHIR SDC?</h2>
+<p>FHIR SDC is an approach for designing, sharing and using structured healthcare forms in a consistent way.</p>
+<p>At the core are two FHIR resources:</p>
+<ul>
+<li><code>Questionnaire</code>, which defines the form</li>
+<li><code>QuestionnaireResponse</code>, which stores the answers</li>
+</ul>
+<p>Base FHIR already gives us those resources. SDC builds on them and adds guidance for richer form behaviour, pre-population, workflow context and better reuse of captured answers.</p>
+<p>The simple idea is this: the form should not live only inside application code. It should exist as structured data that can be versioned, reviewed, reused and shared across systems.</p>
+<h3 id="a-simple-example" tabindex="-1">A simple example</h3>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"resourceType"</span><span class="token operator">:</span> <span class="token string">"Questionnaire"</span><span class="token punctuation">,</span>
+  <span class="token property">"id"</span><span class="token operator">:</span> <span class="token string">"initial-assessment"</span><span class="token punctuation">,</span>
+  <span class="token property">"url"</span><span class="token operator">:</span> <span class="token string">"https://example.org/fhir/Questionnaire/initial-assessment"</span><span class="token punctuation">,</span>
+  <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"1.0.0"</span><span class="token punctuation">,</span>
+  <span class="token property">"status"</span><span class="token operator">:</span> <span class="token string">"active"</span><span class="token punctuation">,</span>
+  <span class="token property">"title"</span><span class="token operator">:</span> <span class="token string">"Initial Assessment"</span><span class="token punctuation">,</span>
+  <span class="token property">"item"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"linkId"</span><span class="token operator">:</span> <span class="token string">"nhs-number"</span><span class="token punctuation">,</span>
+      <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"string"</span><span class="token punctuation">,</span>
+      <span class="token property">"text"</span><span class="token operator">:</span> <span class="token string">"NHS Number"</span><span class="token punctuation">,</span>
+      <span class="token property">"required"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+      <span class="token property">"maxLength"</span><span class="token operator">:</span> <span class="token number">10</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"linkId"</span><span class="token operator">:</span> <span class="token string">"date-of-birth"</span><span class="token punctuation">,</span>
+      <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"date"</span><span class="token punctuation">,</span>
+      <span class="token property">"text"</span><span class="token operator">:</span> <span class="token string">"Date of birth"</span><span class="token punctuation">,</span>
+      <span class="token property">"required"</span><span class="token operator">:</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"linkId"</span><span class="token operator">:</span> <span class="token string">"smoking-status"</span><span class="token punctuation">,</span>
+      <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"choice"</span><span class="token punctuation">,</span>
+      <span class="token property">"text"</span><span class="token operator">:</span> <span class="token string">"Smoking status"</span><span class="token punctuation">,</span>
+      <span class="token property">"required"</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+      <span class="token property">"answerOption"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          <span class="token property">"valueCoding"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">"system"</span><span class="token operator">:</span> <span class="token string">"http://snomed.info/sct"</span><span class="token punctuation">,</span>
+            <span class="token property">"code"</span><span class="token operator">:</span> <span class="token string">"449868002"</span><span class="token punctuation">,</span>
+            <span class="token property">"display"</span><span class="token operator">:</span> <span class="token string">"Current every day smoker"</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">{</span>
+          <span class="token property">"valueCoding"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">"system"</span><span class="token operator">:</span> <span class="token string">"http://snomed.info/sct"</span><span class="token punctuation">,</span>
+            <span class="token property">"code"</span><span class="token operator">:</span> <span class="token string">"8517006"</span><span class="token punctuation">,</span>
+            <span class="token property">"display"</span><span class="token operator">:</span> <span class="token string">"Ex-smoker"</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">{</span>
+          <span class="token property">"valueCoding"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">"system"</span><span class="token operator">:</span> <span class="token string">"http://snomed.info/sct"</span><span class="token punctuation">,</span>
+            <span class="token property">"code"</span><span class="token operator">:</span> <span class="token string">"266919005"</span><span class="token punctuation">,</span>
+            <span class="token property">"display"</span><span class="token operator">:</span> <span class="token string">"Never smoked tobacco"</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span></code></pre>
+<p>When a patient or clinician completes that form, the answers are stored in a <code>QuestionnaireResponse</code>:</p>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"resourceType"</span><span class="token operator">:</span> <span class="token string">"QuestionnaireResponse"</span><span class="token punctuation">,</span>
+  <span class="token property">"questionnaire"</span><span class="token operator">:</span> <span class="token string">"https://example.org/fhir/Questionnaire/initial-assessment|1.0.0"</span><span class="token punctuation">,</span>
+  <span class="token property">"status"</span><span class="token operator">:</span> <span class="token string">"completed"</span><span class="token punctuation">,</span>
+  <span class="token property">"subject"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"reference"</span><span class="token operator">:</span> <span class="token string">"Patient/123"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"authored"</span><span class="token operator">:</span> <span class="token string">"2026-03-24T10:15:00Z"</span><span class="token punctuation">,</span>
+  <span class="token property">"item"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"linkId"</span><span class="token operator">:</span> <span class="token string">"nhs-number"</span><span class="token punctuation">,</span>
+      <span class="token property">"answer"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          <span class="token property">"valueString"</span><span class="token operator">:</span> <span class="token string">"1234567890"</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"linkId"</span><span class="token operator">:</span> <span class="token string">"date-of-birth"</span><span class="token punctuation">,</span>
+      <span class="token property">"answer"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          <span class="token property">"valueDate"</span><span class="token operator">:</span> <span class="token string">"1988-04-12"</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"linkId"</span><span class="token operator">:</span> <span class="token string">"smoking-status"</span><span class="token punctuation">,</span>
+      <span class="token property">"answer"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          <span class="token property">"valueCoding"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">"system"</span><span class="token operator">:</span> <span class="token string">"http://snomed.info/sct"</span><span class="token punctuation">,</span>
+            <span class="token property">"code"</span><span class="token operator">:</span> <span class="token string">"266919005"</span><span class="token punctuation">,</span>
+            <span class="token property">"display"</span><span class="token operator">:</span> <span class="token string">"Never smoked tobacco"</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span></code></pre>
+<p>It looks simple, but it makes a real difference. Once the form definition is structured and shared, different systems can work from the same definition instead of inventing their own version each time.</p>
+<p>One practical detail is worth mentioning. Keep <code>item.linkId</code> stable across form versions, and where possible bind answers to agreed terminology such as SNOMED CT. That makes reporting, mapping, analytics and audit much easier later.</p>
+<p>Another important point is that SDC is not only about rendering forms on screen. In a good implementation, captured answers can also support population or extraction into clinical resources such as <code>Observation</code>, <code>Condition</code> or <code>ServiceRequest</code>.</p>
+<p>There is also an important engineering benefit here. If your form designer or renderer is built around shared <code>Questionnaire</code> resources, you can build it once and reuse it in many places. That is valuable for accessibility, consistency and delivery speed.</p>
+<h2 id="what-makes-sdc-useful-in-practice%3F" tabindex="-1">What makes SDC useful in practice?</h2>
+<p>For technical teams, the value usually becomes clear fairly quickly.</p>
+<ul>
+<li>The form definition is separated from the UI implementation</li>
+<li>Validation rules sit closer to the data model</li>
+<li>Conditional form behaviour becomes easier to manage consistently</li>
+<li>Shared questionnaires reduce duplication between systems</li>
+<li>Structured responses are easier to reuse downstream</li>
+</ul>
+<p>Reusable rendering is a big part of that value. If you invest time in making a renderer accessible, responsive and easy to maintain, that investment can support many forms instead of only one workflow.</p>
+<p>You can also use the same questionnaire in different user experiences. A patient-facing renderer might focus on simple layout, mobile screens and plain language. A practitioner-facing renderer can present the same questionnaire in a way that works better on large screens, with denser layouts and more clinical context.</p>
+<p>The same idea applies to advanced features. If one form needs a body map, signature capture or some other richer interaction, you can model that through questionnaire extensions and add support in the renderer once. After that, the same capability can be reused across other forms that need it.</p>
+<p>For delivery leads and decision makers, the value looks a bit different, but it matters just as much.</p>
+<ul>
+<li>New workflows can be introduced with less custom build each time</li>
+<li>Governance becomes easier when form versions are visible and controlled</li>
+<li>Cross-system data reuse becomes more realistic</li>
+<li>Compliance discussions become simpler when structure and provenance are clearer</li>
+<li>Accessibility improvements can be reused across multiple journeys instead of rebuilt for each form</li>
+</ul>
+<p>SDC does not solve interoperability on its own. You still need good terminology, governance, integration design and operational discipline. But it gives you a much stronger starting point than a collection of custom forms built separately in each system.</p>
+<h2 id="real-life-situations-where-sdc-helps" tabindex="-1">Real-life situations where SDC helps</h2>
+<h3 id="scenario-1%3A-multi-hospital-data-exchange" tabindex="-1">Scenario 1: Multi-hospital data exchange</h3>
+<p>Imagine a healthcare network with several hospitals. Each site captures similar assessment data, but the structure of the forms is slightly different.</p>
+<p>That creates a predictable set of problems:</p>
+<ul>
+<li>One hospital cannot easily compare its data with another</li>
+<li>Regional reporting needs extra mapping and transformation work</li>
+<li>Clinical pathways across sites become harder to standardize</li>
+</ul>
+<p>If that network used shared SDC questionnaires for core assessments, the likely benefits would be:</p>
+<ul>
+<li>More consistent capture of key clinical data</li>
+<li>Less duplication in integration work</li>
+<li>Easier onboarding of new hospitals or partner systems</li>
+</ul>
+<h3 id="scenario-2%3A-cross-border-care-in-europe" tabindex="-1">Scenario 2: Cross-border care in Europe</h3>
+<p>Imagine a patient from Poland receiving treatment in another EU country. The data exists, but its structure is tied to local forms and local workflows.</p>
+<p>That can lead to:</p>
+<ul>
+<li>Delays in understanding the patient record</li>
+<li>Manual translation of data fields</li>
+<li>Higher risk that the meaning of a data element is lost during exchange</li>
+</ul>
+<p>With SDC-aligned forms and shared FHIR structures, you create a better starting point for cross-border interoperability. That matters even more in the context of EHDS, where semantic consistency matters just as much as technical transport.</p>
+<p>In practice, that could mean:</p>
+<ul>
+<li>Cleaner exchange of structured patient information</li>
+<li>Better support for EHDS-style data sharing goals</li>
+<li>More confidence that information keeps the same meaning across systems</li>
+</ul>
+<h3 id="scenario-3%3A-analytics-and-machine-learning-readiness" tabindex="-1">Scenario 3: Analytics and machine learning readiness</h3>
+<p>Imagine a provider building models for readmission risk, early intervention or service planning. The first problem is often not the model. It is the quality and consistency of the input data.</p>
+<p>If the same clinical concept is collected in five different ways, analytics teams spend their time cleaning and mapping instead of learning from the data.</p>
+<p>This is where SDC can help. When core assessments are captured in a consistent structure, you get a better base for dashboards, analytics and machine learning.</p>
+<p>In practice, that could mean:</p>
+<ul>
+<li>Less time spent normalizing form data</li>
+<li>Better consistency in analytical datasets</li>
+<li>More trust in outputs because the source structure is clearer</li>
+</ul>
+<h2 id="what-happens-without-sdc%3F" tabindex="-1">What happens without SDC?</h2>
+<p>Without a structured approach to forms, organizations often end up with the same problems again and again.</p>
+<h3 id="1.-form-proliferation-and-local-workarounds" tabindex="-1">1. <strong>Form proliferation and local workarounds</strong></h3>
+<p>Departments create their own forms for similar needs. Over time, this creates duplication, inconsistent field definitions and hidden local logic.</p>
+<h3 id="2.-poorer-data-quality-at-the-point-of-capture" tabindex="-1">2. <strong>Poorer data quality at the point of capture</strong></h3>
+<p>If validation rules are inconsistent or missing, data quality problems are pushed downstream. Reporting, integration and analytics teams then have to clean the data later.</p>
+<h3 id="3.-more-expensive-interoperability" tabindex="-1">3. <strong>More expensive interoperability</strong></h3>
+<p>When each form is designed differently, interoperability becomes a mapping exercise for every project. That increases delivery time and long-term maintenance cost.</p>
+<h3 id="4.-slower-change-across-the-organization" tabindex="-1">4. <strong>Slower change across the organization</strong></h3>
+<p>Even small workflow changes can require updates in multiple places. That makes it harder to scale new services, pathways or reporting requirements.</p>
+<h3 id="5.-weaker-governance-and-auditability" tabindex="-1">5. <strong>Weaker governance and auditability</strong></h3>
+<p>If form definitions are not managed properly, it becomes harder to answer basic questions such as which version was used, who approved it and how answers should be interpreted.</p>
+<h2 id="in-summary" tabindex="-1">In summary</h2>
+<p>FHIR SDC is not just about digital forms. It is about creating a more reliable way to define, capture and reuse structured healthcare information.</p>
+<p>For teams working in NHS-related environments, Polish healthcare or broader European interoperability work, that matters more every year. EHDS, integration pressures, analytics needs and operational scale all push in the same direction: better structure at the point of capture.</p>
+<p>SDC will not remove every integration challenge. But it can remove a lot of unnecessary variation and that is often where real progress starts.</p>
+<h2 id="let%E2%80%99s-talk" tabindex="-1">Let’s talk</h2>
+<p>If this is close to the work you are doing, feel free to get in touch.</p>
+
+</div>
+
+<div class="mt-16 py-8 border-t-2 flex justify-between items-center">
+  <div class="flex items-center flex-1">
+    <div class="inline-block h-2 w-2 bg-blue-700 rounded-full mr-2 flex justify-center items-center"></div>
+    <span class="text-sm font-medium">Marek Kaluzny</span>
+  </div>
+  <p class="text-sm flex-1">Let's talk about interoperability.</p>
+</div>
+
+</main>
+
+<footer class="mt-8 bg-gray-200 dark:bg-gray-900 py-8 shrink-0">
+  <div class="max-w-screen-sm md:max-w-screen-md mx-auto px-8">
+    <p class="text-sm py-2 text-right">
+      
+
+      
+        &middot; <a href=https://www.linkedin.com/in/marekkaluzny/>LinkedIn</a>
+      
+
+      
+
+    </p>
+  </div>
+</footer>
+</div>
+
+    
+  <script>
+    document.getElementById("toggleDarkMode").addEventListener("click", function() {
+      if (isDarkMode()) {
+        localStorage.theme = 'light'
+        document.documentElement.classList.remove('dark')
+      } else {
+        localStorage.theme = 'dark'
+        document.documentElement.classList.add('dark')
+      }
+    });
+  </script>
+  </body>
+</html>
