@@ -1,0 +1,28 @@
+<div class="flex gap-4">
+  <div class="flex flex-1">
+    <a href="/" class="inline-flex items-center text-base font-bold tracking-tight text-slate-900 dark:text-slate-100">
+      {{ site.title }}
+    </a>
+  </div>
+
+  <div class="flex flex-1 justify-end md:justify-center">
+    <nav class="pointer-events-auto">
+      <ul class="flex rounded-full bg-white/90 px-3 text-sm font-medium text-slate-800 shadow-lg shadow-slate-800/5 ring-1 ring-slate-900/5 backdrop-blur dark:bg-slate-800/90 dark:text-slate-200 dark:ring-white/10">
+        <li><a href="/" class="nav-pill{% if page.url == '/' %} nav-pill-active{% endif %}">Home</a></li>
+        <li><a href="/tags" class="nav-pill{% if page.url == '/tags/' or page.url contains '/tags/' %} nav-pill-active{% endif %}">Tags</a></li>
+        <li><a href="/about" class="nav-pill{% if page.url == '/about/' %} nav-pill-active{% endif %}">About</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="flex justify-end md:flex-1">
+    <button type="button" class="group rounded-full bg-white/90 p-2 shadow-lg shadow-slate-800/5 ring-1 ring-slate-900/5 backdrop-blur transition dark:bg-slate-800/90 dark:ring-white/10" id="toggleDarkMode">
+      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 stroke-slate-500 transition group-hover:stroke-slate-700 dark:hidden dark:stroke-slate-400 dark:group-hover:stroke-slate-300" stroke-width="2">
+        <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+      </svg>
+      <svg viewBox="0 0 24 24" class="hidden h-5 w-5 fill-slate-400 transition group-hover:fill-slate-300 dark:block">
+        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+      </svg>
+    </button>
+  </div>
+</div>
