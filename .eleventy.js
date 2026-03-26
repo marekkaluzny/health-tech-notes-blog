@@ -40,6 +40,16 @@ function withBase(value) {
   return `${normalizedPathPrefix}${normalizedPathname}${suffix}`;
 }
 
+function slugifyTag(value) {
+  return String(value || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 module.exports = function (eleventyConfig) {
   eleventyConfig.setFrontMatterParsingOptions({
     excerpt: true,
@@ -48,6 +58,35 @@ module.exports = function (eleventyConfig) {
   });
 
   eleventyConfig.addLiquidFilter("withBase", withBase);
+  eleventyConfig.addLiquidFilter("slugifyTag", slugifyTag);
+
+  eleventyConfig.addCollection("tagList", (collectionApi) => {
+    const ignoredTags = new Set(["all", "nav", "post", "posts"]);
+    const tagNames = new Set();
+
+    for (const item of collectionApi.getAllSorted()) {
+      const tags = item.data.tags;
+
+      if (!tags) {
+        continue;
+      }
+
+      for (const tag of Array.isArray(tags) ? tags : [tags]) {
+        if (!tag || ignoredTags.has(tag)) {
+          continue;
+        }
+
+        tagNames.add(tag);
+      }
+    }
+
+    return Array.from(tagNames)
+      .sort((left, right) => left.localeCompare(right))
+      .map((name) => ({
+        name,
+        slug: slugifyTag(name),
+      }));
+  });
 
   eleventyConfig.addLiquidFilter("readTime", (content) => {
     const text = String(content || "")

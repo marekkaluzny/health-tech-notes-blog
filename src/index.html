@@ -38,7 +38,8 @@ pagination:
             <div class="flex flex-wrap items-center gap-3 text-sm text-slate-400 dark:text-slate-500">
               {% for tag in post.data.tags %}
                 {% if tag != "posts" %}
-                  <a href="{{ '/tags/' | append: tag | append: '/' | withBase }}">
+                  {% assign tagSlug = tag | slugifyTag %}
+                  <a href="{{ '/tags/' | append: tagSlug | append: '/' | withBase }}">
                     <span class="post-tag">{{ tag }}</span>
                   </a>
                 {% endif %}

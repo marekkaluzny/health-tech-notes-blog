@@ -3,15 +3,15 @@ layout: default.liquid
 pagination:
   data: collections.tagList
   size: 1
-  alias: tag
-permalink: /tags/{{ tag }}/
+  alias: tagItem
+permalink: /tags/{{ tagItem.slug }}/
 eleventyComputed:
-  title: "{{ tag }}"
+  title: "{{ tagItem.name }}"
 ---  
 
 <div class="md:border-l md:border-slate-200 md:pl-6 md:dark:border-slate-700/60">
   <div class="flex max-w-2xl flex-col space-y-16">
-    {% for post in collections[tag] %}
+    {% for post in collections[tagItem.name] %}
       <article class="md:grid md:grid-cols-4 md:items-baseline">
         <div class="group relative flex flex-col items-start md:col-span-3">
           <h2 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">
