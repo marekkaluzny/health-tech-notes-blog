@@ -16,7 +16,7 @@ eleventyComputed:
         <div class="group relative flex flex-col items-start md:col-span-3">
           <h2 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">
             <div class="absolute -inset-x-4 -inset-y-6 z-0 scale-95 bg-slate-50 opacity-0 transition group-hover:scale-100 group-hover:opacity-100 sm:-inset-x-6 sm:rounded-2xl dark:bg-slate-800/50"></div>
-            <a href="{{ post.url }}">
+            <a href="{{ post.url | withBase }}">
               <span class="absolute -inset-x-4 -inset-y-6 z-20 sm:-inset-x-6 sm:rounded-2xl"></span>
               <span class="relative z-10">{{ post.data.title }}</span>
             </a>

@@ -1,6 +1,6 @@
 <div class="flex gap-4">
   <div class="flex flex-1">
-    <a href="/" class="inline-flex items-center text-base font-bold tracking-tight text-slate-900 dark:text-slate-100">
+    <a href="{{ '/' | withBase }}" class="inline-flex items-center text-base font-bold tracking-tight text-slate-900 dark:text-slate-100">
       {{ site.title }}
     </a>
   </div>
@@ -8,9 +8,9 @@
   <div class="flex flex-1 justify-end md:justify-center">
     <nav class="pointer-events-auto">
       <ul class="flex rounded-full bg-white/90 px-3 text-sm font-medium text-slate-800 shadow-lg shadow-slate-800/5 ring-1 ring-slate-900/5 backdrop-blur dark:bg-slate-800/90 dark:text-slate-200 dark:ring-white/10">
-        <li><a href="/" class="nav-pill{% if page.url == '/' %} nav-pill-active{% endif %}">Home</a></li>
-        <li><a href="/tags" class="nav-pill{% if page.url == '/tags/' or page.url contains '/tags/' %} nav-pill-active{% endif %}">Tags</a></li>
-        <li><a href="/about" class="nav-pill{% if page.url == '/about/' %} nav-pill-active{% endif %}">About</a></li>
+        <li><a href="{{ '/' | withBase }}" class="nav-pill{% if page.url == '/' %} nav-pill-active{% endif %}">Home</a></li>
+        <li><a href="{{ '/tags/' | withBase }}" class="nav-pill{% if page.url == '/tags/' or page.url contains '/tags/' %} nav-pill-active{% endif %}">Tags</a></li>
+        <li><a href="{{ '/about/' | withBase }}" class="nav-pill{% if page.url == '/about/' %} nav-pill-active{% endif %}">About</a></li>
       </ul>
     </nav>
   </div>

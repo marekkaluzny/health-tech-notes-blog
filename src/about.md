@@ -6,7 +6,7 @@ title: About me
 <div>
 	<div class="mb-8 flex flex-col items-center gap-6">
 		<div class="h-24 w-24 shrink-0 overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/10">
-			<img src="/assets/img/photo-avatar-resized.jpeg" alt="Portrait of Marek" class="h-full w-full object-cover object-center grayscale" />
+			<img src="{{ '/assets/img/photo-avatar-resized.jpeg' | withBase }}" alt="Portrait of Marek" class="h-full w-full object-cover object-center grayscale" />
 		</div>
 
 		<div class="prose max-w-none text-left dark:prose-invert hover:prose-a:text-blue-500">

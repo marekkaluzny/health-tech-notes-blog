@@ -8,13 +8,13 @@
     <meta name='description' content={{ site.description }}>
     <meta name="theme-color" content="#f5f5f4"/>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png?v=denimdots1">
-    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png?v=denimdots1">
-    <link rel="manifest" href="/manifest.json?v=denimdots1" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/img/favicon/favicon-32x32.png?v=denimdots1' | withBase }}">
+    <link rel="apple-touch-icon" href="{{ '/assets/img/favicon/apple-touch-icon.png?v=denimdots1' | withBase }}">
+    <link rel="manifest" href="{{ '/manifest.json?v=denimdots1' | withBase }}" />
 
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
-    <link href="/assets/styles/tailwind.css" rel="stylesheet" />
-    <link href="/assets/styles/index.css" rel="stylesheet" />
+    <link href="{{ '/assets/styles/tailwind.css' | withBase }}" rel="stylesheet" />
+    <link href="{{ '/assets/styles/index.css' | withBase }}" rel="stylesheet" />
     <script>
       const isDarkMode = () => localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
       if (isDarkMode()) {
