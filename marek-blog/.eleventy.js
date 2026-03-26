@@ -11,7 +11,6 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
   eleventyConfig.addPassthroughCopy({ "src/manifest.json": "manifest.json" });
-//   eleventyConfig.addPassthroughCopy("robots.txt");
 
   eleventyConfig.addFilter("readTime", function (content) {
     const words = countWords(content || "");

@@ -2,13 +2,19 @@
 layout: base
 ---
 
-<div class="min-h-screen flex flex-col">
+<div class="relative min-h-screen">
+  <div class="pointer-events-none fixed inset-0 -z-10 ring-1 ring-inset ring-slate-900/[0.05] dark:ring-white/[0.05]"></div>
 
-<main class="flex-1 w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
+  <header class="border-b border-slate-900/5 py-6 dark:border-white/10">
+    <div class="mx-auto w-full max-w-2xl px-4 sm:px-8">
+      {% include "nav.liquid" %}
+    </div>
+  </header>
 
-  {{ content }}
-
-</main>
-
-{% include "footer.liquid" %}
+  <div class="mx-auto max-w-2xl px-4 py-10 sm:px-8">
+    <main>
+      {{ content }}
+    </main>
+    {% include "footer.liquid" %}
+  </div>
 </div>
